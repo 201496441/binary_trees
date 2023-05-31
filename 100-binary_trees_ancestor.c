@@ -1,28 +1,54 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_sibling - finds the sibling of a node.
- *@node: pointer to the node to find the sibling.
- * Return: pointer to the sibling node.
+ * binary_tree_depth - measures the depth of a node in a binary tree.
+ *@tree: pointer to the node to measure the depth.
+ * Return: if tree is NULL, function must return 0.
  */
-binary_tree_t *binary_tree_sibling(binary_tree_t *node)
+size_t binary_tree_depth(const binary_tree_t *tree)
 {
-	if (node == NULL || node->parent == NULL)
-		return (NULL);
-	if (node->parent->right == node)
-		return (node->parent->left);
+	if (tree == NULL)
+		return (0);
 	else
-		return (node->parent->right);
-
+		return (1 + binary_tree_depth(tree->parent));
 }
 /**
- * binary_tree_uncle - function that finds the uncle of a node.
- *@node: pointer to the node to find the uncle.
- * Return: pointer to the uncle node.
+ * binary_trees_ancestor - finds the lowest common ancestor of two nodes
+ * @first: first node
+ * @second: second node
+ * Return: lowest common ancestor
  */
-binary_tree_t *binary_tree_uncle(binary_tree_t *node)
+binary_tree_t *binary_trees_ancestor(const binary_tree_t *first,
+				     const binary_tree_t *second)
 {
-	if (node == NULL)
+	size_t height_f = 0, height_s = 0;
+	const binary_tree_t *aux = NULL;
+
+	height_f = binary_tree_depth(first);
+	height_s = binary_tree_depth(second);
+	if (height_f && height_s)
+	{
+		if (height_f > height_s)
+		{
+			aux = first;
+			first = second;
+			second = aux;
+		}
+		while (first)
+		{
+			aux = second;
+			while (aux)
+			{
+				if (first == aux)
+					return ((binary_tree_t *)first);
+				aux = aux->parent;
+			}
+			first = first->parent;
+		}
+	}
+	else
+	{
 		return (NULL);
-	return (binary_tree_sibling(node->parent));
+	}
+	return (NULL);
 }
